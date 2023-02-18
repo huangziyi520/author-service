@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.mos.author.service.impl.TestSecurityDemo
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.031 s - in com.mos.author.service.impl.TestSecurityDemo
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.585 s - in com.mos.author.service.impl.TestSecurityDemo

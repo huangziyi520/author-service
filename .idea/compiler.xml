@@ -7,18 +7,18 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="api-gateway" />
-        <module name="spring-security" />
         <module name="author-service-core" />
-        <module name="service-base" />
         <module name="author-service-client" />
-        <module name="service-acl" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="api-gateway" target="8" />
       <module name="common" target="8" />
       <module name="infrastructure" target="8" />
       <module name="service" target="8" />
+      <module name="service-acl" target="8" />
+      <module name="service-base" target="8" />
+      <module name="spring-security" target="8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
