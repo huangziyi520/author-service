@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.canteencenter.dao.RoleDao">
+
+    <resultMap id="RoleMap"
+               type="com.canteencenter.security.entity.Role">
+        <id column="id" property="id"/>
+        <id column="role_name" property="roleName"/>
+        <result column="role_code" property="roleCode"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="gmt_create" property="gmtCreate"/>
+    </resultMap>
+    <sql id="allColumns">
+        id,role_name,role_code,remark,is_deleted,gmt_modified,gmt_create
+    </sql>
+    <sql id="setColumns">
+        <if test="id != null">
+            id=#{id},
+        </if>
+        <if test="roleName != null">
+            role_name=#{roleName},
+        </if>
+        <if test="roleCode != null">
+            role_code=#{roleCode},
+        </if>
+        <if test="remark != null">
+            remark=#{remark},
+        </if>
+        <if test="isDeleted != null">
+            is_deleted=#{isDeleted},
+        </if>
+        <choose>
+            <when test="gmtModified != null">
+                gmt_modified = ${gmtModified},
+            </when>
+            <otherwise>
+                gmt_modified = now(),
+            </otherwise>
+        </choose>
+        <if test="gmtCreate != null">
+            gmt_create=#{gmtCreate}
+        </if>
+    </sql>
+
+    <select id="selectRoleById" resultMap="RoleMap">
+        select
+        <include refid="allColumns"/>
+        from acl_role
+        where id=#{id};
+    </select>
+
+    <select id="selectRoleByRoleCode" resultMap="RoleMap">
+        select
+        <include refid="allColumns"/>
+        from acl_role
+        where role_code=#{roleCode};
+    </select>
+
+    <insert id="createRole" parameterType="com.canteencenter.security.entity.Role">
+        insert into acl_user
+        <set>
+            <include refid="setColumns"/>
+        </set>
+    </insert>
+
+    <update id="updateRole" parameterType="com.canteencenter.security.entity.Role">
+        update acl_user
+        <set>
+            <include refid="setColumns"/>
+        </set>
+        where id=#{id}
+    </update>
+</mapper>

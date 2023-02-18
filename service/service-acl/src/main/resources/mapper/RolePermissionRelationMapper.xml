@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.canteencenter.dao.RolePermissionDao">
+
+    <resultMap id="RolePermissionRelationMap"
+               type="com.canteencenter.security.entity.RolePermissionRelation">
+        <id column="id" property="id"/>
+        <id column="role_id" property="roleId"/>
+        <result column="permission_id" property="permissionId"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="gmt_create" property="gmtCreate"/>
+    </resultMap>
+    <sql id="allColumns">
+        id,role_id,permission_id,is_deleted,gmt_create,gmt_modified
+    </sql>
+    <sql id="setColumns">
+        <if test="id != null">
+            id=#{id},
+        </if>
+        <if test="roleId != null">
+            role_id=#{roleId},
+        </if>
+        <if test="permissionId != null">
+            permission_id=#{permissionId},
+        </if>
+        <if test="isDeleted != null">
+            is_deleted=#{isDeleted},
+        </if>
+        <choose>
+            <when test="gmtModified != null">
+                gmt_modified = ${gmtModified},
+            </when>
+            <otherwise>
+                gmt_modified = now(),
+            </otherwise>
+        </choose>
+        <if test="gmtCreate != null">
+            gmt_create=#{gmtCreate}
+        </if>
+    </sql>
+
+    <select id="selectRolePermissionById" resultMap="RolePermissionRelationMap">
+        select
+        <include refid="allColumns"/>
+        from acl_role_permission
+        where id=#{id};
+    </select>
+
+    <select id="selectRolePermissionRelationsByRoleId" resultMap="RolePermissionRelationMap">
+        select
+        <include refid="allColumns"/>
+        from acl_role_permission
+        where role_id=#{roleId};
+    </select>
+
+    <select id="selectRolePermissionRelationsByPermissionId" resultMap="RolePermissionRelationMap">
+        select
+        <include refid="allColumns"/>
+        from acl_role_permission
+        where permission_id=#{permissionId};
+    </select>
+
+    <insert id="createRolePermissionRelation" parameterType="com.canteencenter.security.entity.RolePermissionRelation">
+        insert into acl_role_permission
+        <set>
+            <include refid="setColumns"/>
+        </set>
+    </insert>
+
+    <update id="updateRolePermissionRelation" parameterType="com.canteencenter.security.entity.RolePermissionRelation">
+        update acl_role_permission
+        <set>
+            <include refid="setColumns"/>
+        </set>
+        where id=#{id}
+    </update>
+</mapper>

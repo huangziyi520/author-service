@@ -1,0 +1,86 @@
+OpenSSL:自定义证书，不被google浏览器承认,该证书只对cas.com这个域名有效(可配置)
+一、根证书
+1、生成一个rsa编码的密钥信息
+    openssl genrsa -out /path/../cakey.pem 2048
+2、生成根证书的签发申请
+    openssl req -new -key  CA/cakey.pem -out  CA/cacert.csr -subj /CN=cas.com
+3、根证书的签发申请
+    openssl x509 -req -days 3650 -sha1 -extensions v3_ca -signkey CA/cakey.pem -in CA/cacert.csr -out CA/ca.cer
+二、服务器端证书
+1、生成服务器私钥
+    openssl genrsa -aes256 -out CA/service-cert/server-key.pem 2048
+    生成该私钥的时候需要设置密码
+2、生成服务器端证书的签发申请
+    openssl req -new -key  CA/service-cert/server-key.pem -out  CA/service-cert/server.csr -subj /CN=cas.com
+3、生成服务器端证书的签发申请
+    openssl x509 -req -days 3650 -sha1 -extensions v3_ca -signkey CA/service-cert/server-key.pem -in CA/service-cert/server.csr -out CA/service-cert/ca.cer
+三、客户端证书
+1、生成服务器私钥
+    openssl genrsa -aes256 -out CA/client-cert/client-key.pem 2048
+    生成该私钥的时候需要设置密码
+2、生成服务器端证书的签发申请
+    openssl req -new -key  CA/client-cert/client-key.pem -out  CA/client-cert/client.csr -subj /CN=cas.com
+3、生成服务器端证书的签发申请
+    openssl x509 -req -days 365 -sha1 -CA CA/ca.cer -CAkey CA/cakey.pem -CAserial CA/service-cert/ca.srl -in CA/client-cert/client.csr -out CA/client-cert/client.cer
+四、使用证书:
+由于证书会在tomcat上使用，将生成的证书放在tocat目录上使用
+1、生成客户端证书
+    openssl pkcs12 -export -clcerts -name cas-client -inkey CA/client-cert/client-key.pem -in CA/client-cert/client.cer -out CA/client-cert/client.p12
+2、生成服务端证书
+    openssl pkcs12 -export -clcerts -name cas-server -inkey CA/service-cert/server-key.pem -in CA/service-cert/ca.cer -out CA/service-cert/server.p12
+3、在本机系统中导入信任证书，随后会在tomcat目录下生成"ca-trust.p12"证书文件
+    keytool -importcert -trustcacerts -alias cas.com -file CA/ca.cer -keystore CA/tomcat/ca-trust.p12
+4、使用keytool工具查看证书信息
+    keytool -list -keystore CA/client-cert/client.p12 -storetype pkcs12 -v
+    显示如下：
+    D:\soft-util\openssl\installing\OpenSSL-Win64\bin> keytool -list -keystore CA/client-cert/client.p12 -storetype pkcs12 -v
+    输入密钥库口令:
+    密钥库类型: PKCS12
+    密钥库提供方: SUN
+
+    您的密钥库包含 1 个条目
+
+    别名: cas-client
+    创建日期: 2022年1月23日
+    条目类型: PrivateKeyEntry
+    证书链长度: 1
+    证书[1]:
+    所有者: CN=cas.com
+    发布者: CN=cas.com
+    序列号: 4dc98c4ebec5e289a17b5a01ca45a6a871611a19
+    生效时间: Sun Jan 23 21:45:11 CST 2022, 失效时间: Mon Jan 23 21:45:11 CST 2023
+    证书指纹:
+             SHA1: 67:C8:D8:30:29:A6:0E:D3:38:01:4A:55:CE:15:BC:DA:62:16:04:22
+             SHA256: B9:EE:22:DE:7C:64:93:96:1D:6B:65:54:50:DF:AB:64:74:CC:9B:EF:6C:5F:71:47:7E:24:6D:CD:1E:33:CB:2A
+    签名算法名称: SHA1withRSA (弱)
+    主体公共密钥算法: 2048 位 RSA 密钥
+    版本: 1
+
+
+    *******************************************
+    *******************************************
+
+
+
+    Warning:
+    <cas-client> 使用的 SHA1withRSA 签名算法被视为存在安全风险。此算法将在未来的更新中被禁用。
+
+    权限管理:
+        总共5张表：1、菜单表 2、用户表 3、角色表 4、角色菜单关系表 5、用户角色关系表
+        建表语句：
+        创建数据库：
+        create database author_perssion；
+        创建表：见 /资料文件夹
+
+    模块分析
+    author-service：父工程pom文件，定义依赖版本
+        common:
+            service-base:编写使用工具类
+            spring-security:spring-security相关配置
+        infrastructure:
+            api-gateway: 配置gateway网关
+        service:
+            service-acl:实现权限管理功能的代码
+
+
+    

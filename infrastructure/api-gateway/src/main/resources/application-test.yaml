@@ -1,0 +1,6 @@
+server:
+  port: 8009
+spring:
+  application:
+    name: service-acl
+#数据库连接

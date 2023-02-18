@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.canteencenter.dao.UserDao">
+
+    <resultMap id="UserMap"
+               type="com.canteencenter.security.entity.User">
+        <id column="id" property="id"/>
+        <id column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="salt" property="salt"/>
+        <result column="token" property="token"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="gmt_create" property="gmtCreate"/>
+    </resultMap>
+    <sql id="allColumns">
+        id,username,password,nick_name,salt,token,is_deleted,gmt_modified,gmt_create
+    </sql>
+    <sql id="setColumns">
+        <if test="id != null">
+            id=#{id},
+        </if>
+        <if test="username != null">
+            username=#{username},
+        </if>
+        <if test="password != null">
+            password=#{password},
+        </if>
+        <if test="nickName != null">
+            nick_name=#{nickName},
+        </if>
+        <if test="salt != null">
+            salt=#{salt},
+        </if>
+        <if test="token != null">
+            token=#{token},
+        </if>
+        <if test="isDeleted != null">
+            is_deleted=#{isDeleted},
+        </if>
+        <choose>
+            <when test="gmtModified != null">
+                gmt_modified = ${gmtModified},
+            </when>
+            <otherwise>
+                gmt_modified = now(),
+            </otherwise>
+        </choose>
+        <if test="gmtCreate != null">
+            gmt_create=#{gmtCreate}
+        </if>
+    </sql>
+
+    <select id="selectUserByUserId" resultMap="UserMap">
+        select
+        <include refid="allColumns"/>
+        from acl_user
+        where id=#{id};
+    </select>
+
+    <select id="selectUserByUserName" resultMap="UserMap">
+        select
+        <include refid="allColumns"/>
+        from acl_user
+        where username=#{username};
+    </select>
+
+    <insert id="createUser" parameterType="com.canteencenter.security.entity.User">
+        insert into acl_user
+        <set>
+            <include refid="setColumns"/>
+        </set>
+    </insert>
+
+    <update id="updateUser">
+        update registerInfo
+        <set>
+            <include refid="setColumns"/>
+        </set>
+        where id=#{id}
+    </update>
+</mapper>

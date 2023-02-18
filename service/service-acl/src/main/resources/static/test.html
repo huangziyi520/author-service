@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:form="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <form:form commandName="user" action="/valid/signup" method="post">
+
+        <form:errors path="*"/></br>
+        用户名<form:input path="userName"/>
+        <form:errors path="username"/>
+
+        </form:errors>
+
+    </form:form>
+
+</body>
+</html>
